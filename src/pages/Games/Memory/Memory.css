@@ -1,14 +1,55 @@
 .gamecontainer {
+    --grid-size: 5;
     margin: 1rem 5rem;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(var(--grid-size), 1fr);
+    grid-template-rows: repeat(var(--grid-size), 1fr);
     gap: .3rem;
+}
+
+.card {
+    background-color: green;
+    border-radius: 5px;
+
+    animation: hideCard 2s linear;
 }
 
 img {
     width: 100%;
     height: 100%;
     border-radius: 5px;
-    background-color: gray;
+    background-color: blue;
+    opacity: 0;
+    animation: hideImage 2s linear;
+}
+
+.card.active {
+    transform: rotateY(0);
+}
+
+.card.active img {
+    opacity: 1;
+}
+
+.unmatch {
+    background-color: red;
+    border-radius: 5px;
+    animation: hideCard 2s linear;
+}
+
+@keyframes hideCard {
+    0%, 70% {
+        transform: rotateX(0deg);
+    } 100% {
+        transform: rotateX(180deg);
+
+    }
+}
+
+@keyframes hideImage {
+    0%, 84% {
+        opacity: 1;
+    } 85% {
+        opacity: 0;
+    }
 }

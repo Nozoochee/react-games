@@ -7,6 +7,9 @@ export default function Memory(){
 
     const max_cards = 4;
 
+    //Should work helThink, maybe needs dedicated button click
+    //document.documentElement.style.setProperty('--grid-size', max_cards);
+
     //Init cards
     //Chose random cards from them based on difficulty (unique)
     //Duplicate the array elements
@@ -14,7 +17,7 @@ export default function Memory(){
 
     let cardArray = [];
     for (let i = 39; i <= 55; i++) {
-        cardArray.push({id: i, name: `test${i}`, status: '', img: `/images/${i}.png`})
+        cardArray.push({id: i, name: `card${i}`, status: '', img: `/images/${i}.png`})
     }
 
     let finalArr = [];
@@ -28,11 +31,15 @@ export default function Memory(){
 
     const [cards, setCards] = useState(finalArr)
 
+    const clickHandler = (index) => {
+        alert(index);
+    }
+
     return (<>
         <h1>Pokemon Memory</h1>
         <div className="gamecontainer">
             {cards.map((card, index) => {
-                return <Card card={card} key={index} />
+                return <Card card={card} key={index} clickHandler={clickHandler}/>
             })}
         </div>
     </>
