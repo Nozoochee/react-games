@@ -15,21 +15,9 @@ export default function Memory(){
     //Duplicate the array elements
     //Shuffle
 
-    let cardArray = [];
-    for (let i = 39; i <= 55; i++) {
-        cardArray.push({id: i, name: `card${i}`, status: '', img: `/images/${i}.png`})
-    }
+    let cardArray = initializeCards(max_cards);
 
-    let finalArr = [];
-    for (let i = 0; i < max_cards; i++) {
-        finalArr.push(cardArray[Math.floor(Math.random()*cardArray.length)])
-    }
-    for (let i = 0; i < max_cards; i++) {
-        finalArr.push(finalArr[i]);
-    }
-    finalArr.sort(() => Math.random() - 0.5)
-
-    const [cards, setCards] = useState(finalArr)
+    const [cards, setCards] = useState(cardArray)
 
     const clickHandler = (index) => {
         alert(index);
@@ -59,4 +47,41 @@ export default function Memory(){
 
     display: grid is perfect for the cards
     */
+}
+/**
+ * 
+ * @param {number} max_cards 
+ * @returns An array of random unique cards, duplicated so there's always 2
+ */
+function initializeCards(max_cards){
+    let outArr = getAllCards();
+    outArr = getRandomElementsFromArray(outArr, max_cards, false);
+    outArr = outArr.concat([...outArr]);
+    outArr.sort(() => Math.random() - 0.5);
+
+    return outArr;
+}
+
+function getAllCards(){
+    let outArr = [];
+    for (let i = 39; i <= 55; i++) {
+        outArr.push({id: i, name: `card${i}`, status: '', img: `/images/${i}.png`})
+    }
+    return outArr;
+}
+
+function getRandomElementsFromArray(inArr, number, allowDuplicate){
+    let outArr = [];
+    if(number > inArr.length) {
+        console.error('inArr has less elements than requested');
+        return outArr;
+    }
+    
+    while (outArr.length < number) {
+        let randomElement = inArr[Math.floor(Math.random()*inArr.length)];
+        if(allowDuplicate || !outArr.includes(randomElement)){
+            outArr.push(randomElement);
+        }
+    }
+    return outArr;
 }
