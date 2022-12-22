@@ -1,5 +1,5 @@
 .gamecontainer {
-    --grid-size: 5;
+    --grid-size: 4;
     margin: 1rem 5rem;
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);

@@ -1,53 +1,73 @@
 import './Memory.css';
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Card from "./Components/Card";
 
 
 export default function Memory(){
 
-    const max_cards = 4;
-
-    //Should work helThink, maybe needs dedicated button click
-    //document.documentElement.style.setProperty('--grid-size', max_cards);
-
-    //Init cards
-    //Chose random cards from them based on difficulty (unique)
-    //Duplicate the array elements
-    //Shuffle
+    const max_cards = 8;
 
     let cardArray = initializeCards(max_cards);
 
-    const [cards, setCards] = useState(cardArray)
+    const [previousCardState, setPreviousCardState] = useState(-1);
+    //useRef is like useState but it doesn't redraw DOM
+    const previousIndex = useRef(-1);
+
+    const [cards, setCards] = useState(cardArray);
+
+    const checkMatch = (index) => {
+        if (cards[index].id === cards[previousCardState].id) {
+            cards[previousCardState].status = 'active matched';
+            cards[index].status = 'active matched';
+            setPreviousCardState(-1);
+        } else {
+            cards[index].status = 'active';
+            setCards([...cards]);
+            setTimeout(()=>{
+                setPreviousCardState(-1);
+                cards[index].status = 'unmatch';
+                cards[previousCardState].status = 'unmatch';
+                setCards([...cards]);
+                setTimeout(()=>{
+                    cards[index].status = '';
+                    cards[previousCardState].status = '';
+                    setCards([...cards]);
+                },600);
+            }, 400);
+        }
+    }
 
     const clickHandler = (index) => {
-        alert(index);
+        if (index !== previousIndex.current) {
+            if(cards[index].status === 'active matched'){
+                alert('already matched');
+            } else {
+                if (previousCardState === -1) {
+                    previousIndex.current = index;
+                    cards[index].status = 'active';
+                    setCards([...cards]);
+                    setPreviousCardState(index);
+                } else {
+                    checkMatch(index);
+                    previousIndex.current = -1;
+                }
+            }
+        } else {
+            alert('card currently selected');
+        }
     }
 
     return (<>
         <h1>Pokemon Memory</h1>
         <div className="gamecontainer">
             {cards.map((card, index) => {
-                return <Card card={card} key={index} clickHandler={clickHandler}/>
+                return <Card key={index} card={card} index={index} clickHandler={clickHandler}/>
             })}
         </div>
     </>
     )
-
-    /*
-    How to play:
-    Random selection of cards in a grid
-    Cards start off reversed
-    Player clicks reversed card
-    Card gets flipped
-    Do it again
-    See if card 1 == card 2
-        yes: remove them
-        no: remove 1 health, reverse cards
-    repeat until there are no cards left OR player has run out of health
-
-    display: grid is perfect for the cards
-    */
 }
+
 /**
  * 
  * @param {number} max_cards 
@@ -56,7 +76,10 @@ export default function Memory(){
 function initializeCards(max_cards){
     let outArr = getAllCards();
     outArr = getRandomElementsFromArray(outArr, max_cards, false);
-    outArr = outArr.concat([...outArr]);
+    let len = outArr.length;
+    for(let i=0; i<len; i++){
+        outArr.push({id: outArr[i].id, name: outArr[i].name, status: outArr[i].status, img: outArr[i].img});
+    }
     outArr.sort(() => Math.random() - 0.5);
 
     return outArr;
